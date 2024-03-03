@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fish & game</title>
+    <style>
+        body {
+            font-family: 'Futura-BoldOblique', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1, p, .palette-name {
+            font-family: 'Futura-BoldOblique', Arial, sans-serif;
+            font-weight: bold;
+            font-style: oblique;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 0px;
+        }
+
+        p {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .palette-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: left;
+        }
+
+        .palette {
+            display: flex;
+            align-items: center;
+        }
+
+        .palette-name {
+            margin-right: 20px;
+        }
+
+        .colors {
+            display: flex;
+            gap: 10px;
+        }
+
+        .color {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        /* Hide hexcodes */
+        .hexcode {
+            display: none;
+        }
+
+        .clipboard-notification {
+            position: absolute;
+            top: 30;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .clipboard-notification.visible {
+            opacity: 1;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>fish & game</h1>
+    <p>🦆 color palettes inspired by love and respect for wildlife 🪸<br><br>click on a palette to copy it to your clipboard (as a python-style list of hexcodes).</p>
+    <div class="palette-container" id="paletteContainer">
+        <!-- palettes generated here -->
+    </div>
+    <div id="clipboard-notification" class="clipboard-notification hidden">copied to clipboard :)</div>
+
+    <script>
+        // palettes -- modify here
+        const colorPalettes = [
+            {
+                "name": "trout4",
+                "colors": ["#767554", "#9da8b9", "#a67676", "#648c84"]
+            },
+        ];
+
+        // Function to generate color palettes
+        function generatePalettes() {
+            const paletteContainer = document.getElementById('paletteContainer');
+            colorPalettes.forEach(palette => {
+                const paletteElement = document.createElement('div');
+                paletteElement.classList.add('palette');
+                paletteElement.onclick = () => copyHexCodes(palette.colors);
+                
+                const paletteName = document.createElement('div');
+                paletteName.classList.add('palette-name');
+                paletteName.textContent = palette.name + ':';
+                paletteElement.appendChild(paletteName);
+
+                const colorsContainer = document.createElement('div');
+                colorsContainer.classList.add('colors');
+                palette.colors.forEach(color => {
+                    const colorElement = document.createElement('div');
+                    colorElement.classList.add('color');
+                    colorElement.style.backgroundColor = color;
+                    colorsContainer.appendChild(colorElement);
+                });
+                paletteElement.appendChild(colorsContainer);
+
+                paletteContainer.appendChild(paletteElement);
+            });
+        }
+
+        // copy hex codes to clipboard
+        function copyHexCodes(hexcodes) {
+            const textArea = document.createElement('textarea');
+            textArea.value = `[${hexcodes.map(hex => `'${hex}'`).join(', ')}]`;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            showClipboardNotification();
+        }
+
+        // Function to show clipboard notification
+        function showClipboardNotification() {
+            const notification = document.getElementById('clipboard-notification');
+            notification.classList.remove('hidden');
+            notification.classList.add('visible');
+            setTimeout(function() {
+                notification.classList.remove('visible');
+                notification.classList.add('hidden');
+            }, 2000); // Hide after 2 seconds
+        }
+
+        // generate color palettes on page load
+        window.onload = generatePalettes;
+    </script>
+</body>
+</html>
